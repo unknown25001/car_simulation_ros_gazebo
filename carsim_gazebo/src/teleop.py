@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 from __future__ import print_function
 
@@ -60,7 +60,7 @@ def vels(speed,turn):
 	return "currently:\tspeed %s\tturn %s " % (speed,turn)
 
 if __name__=="__main__":
-    	settings = termios.tcgetattr(sys.stdin)
+	settings = termios.tcgetattr(sys.stdin)
 	
 	pub = rospy.Publisher('carsim/cmd_vel', Twist, queue_size = 1)
 	rospy.init_node('teleop_twist_keyboard')
@@ -100,7 +100,7 @@ if __name__=="__main__":
 					break
 
 			twist = Twist()
-			twist.linear.x = x*speed; twist.linear.y = y*speed; twist.linear.z = z*speed;
+			twist.linear.x = x*speed; twist.linear.y = y*speed; twist.linear.z = z*speed
 			twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = th*turn
 			pub.publish(twist)
 
@@ -112,7 +112,5 @@ if __name__=="__main__":
 		twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
 		twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
 		pub.publish(twist)
-
-    		termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
-
-
+  
+		termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)

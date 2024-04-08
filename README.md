@@ -1,3 +1,13 @@
+# COURSE
+先在虚拟机里`roslaunch carsim_gazebo carsim.launch`召唤Gazebo界面，然后`rosrun carsim_gazebo teleop.py`，attach到这个terminal上按方向键，Gazebo里面的车就会动。
+除了我改的部分还需要装下面这个依赖：
+```
+sudo apt install ros-noetic-effort-controllers
+```
+下面是原仓库的README
+
+---
+
 [![Build Status](https://travis-ci.org/duthades/car_simulation_ros_gazebo.svg?branch=master)](https://travis-ci.org/duthades/car_simulation_ros_gazebo)
 # car_simulation_ros_gazeb
 
