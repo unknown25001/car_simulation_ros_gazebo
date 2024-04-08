@@ -378,7 +378,7 @@ TRANSMISSION
 
 
   <!-- Hokuyo Laser -->
-  <!-- <link name="hokuyo_link">
+  <link name="hokuyo_link">
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
@@ -398,11 +398,11 @@ TRANSMISSION
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
     </inertial>
-  </link> -->
+  </link>
   
   
     <!-- hokuyo -->
-  <!-- <gazebo reference="hokuyo_link">
+  <gazebo reference="hokuyo_link">
     <sensor type="ray" name="head_hokuyo_sensor">
       <pose>0 0 0 0 0 0</pose>
       <visualize>true</visualize>
@@ -427,13 +427,13 @@ TRANSMISSION
         <frameName>hokuyo_link</frameName>
       </plugin>
     </sensor>
-  </gazebo> -->
+  </gazebo>
 
 
 <!--
 SENSORS
 -->
-<!-- <gazebo>
+<gazebo>
   <plugin name="p3d_base_controller" filename="libgazebo_ros_p3d.so">
     <alwaysOn>true</alwaysOn>
     <updateRate>50.0</updateRate>
@@ -444,6 +444,6 @@ SENSORS
     <xyzOffsets>0 0 0</xyzOffsets>
     <rpyOffsets>0 0 0</rpyOffsets>
   </plugin>
-</gazebo> -->
+</gazebo>
     
 </robot>
