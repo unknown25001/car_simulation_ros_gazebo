@@ -33,6 +33,7 @@ rosrun carsim_gazebo teleop.py
 #### 控制小车
 
 - 使用 Python 脚本从键盘读取输入，将输入转换为 Twist 消息，然后发布到控制车速的消息队列，以控制小车的移动和转向。
+
 ```python
 pub = rospy.Publisher('car/velocity', Twist)
 
@@ -46,7 +47,9 @@ while(1):
     # ...
     pub.publish(twist)
 ```
-- 使用ROS提供的软件包`ros-noetic-diff-drive-controller`提供的差速控制器插件`libgazebo_ros_diff_drive.so`实现目标速度->轮子转动行为的转换。
+
+- 使用 ROS 提供的软件包`ros-noetic-diff-drive-controller`提供的差速控制器插件`libgazebo_ros_diff_drive.so`实现目标速度->轮子转动行为的转换。
+
 ```xml
 <gazebo>
   <plugin name="diff_ctrl" filename="libgazebo_ros_diff_drive.so">
@@ -61,19 +64,23 @@ while(1):
   </plugin>
 </gazebo>
 ```
+
 - 建模方面，首先不知道从哪找了一个`.dae`的贴图文件，像这样贴在了`model.urdf`中的小车底盘上作为外壳：
+
 ```xml
 <link name="base_link">
     <visual>
         <geometry>
-            <mesh filename="package://course/meshes/car.dae"/> 
+            <mesh filename="package://course/meshes/car.dae"/>
             <origin rpy="0 0 -1" xyz="0 0 1"/>
             ...
         </geometry>
     </visual>
-</link>    
+</link>
 ```
+
 - 车的轮子是圆柱形的碰撞体，自定义了位置、摩擦系数等参数：
+
 ```xml
 <link name="left_wheel">
     <collision>
@@ -101,7 +108,9 @@ while(1):
 </inertial>
 </link>
 ```
-- 底盘和四个轮通过joint连接，这几个joint就是直接由上面的差速控制器插件控制的。
+
+- 底盘和四个轮通过 joint 连接，这几个 joint 就是直接由上面的差速控制器插件控制的。
+
 ```xml
 <joint type="continuous" name="left_wheel_hinge">
     <axis xyz="0 1 0"/>
@@ -114,7 +123,8 @@ while(1):
 ```
 
 ### 实验结果:
-- 编写了一个urdf格式的模型，轮子是可旋转的、带摩擦系数的碰撞体，可以在地面上转动带动车辆移动
+
+- 编写了一个 urdf 格式的模型，轮子是可旋转的、带摩擦系数的碰撞体，可以在地面上转动带动车辆移动
 - 控制指令成功发布并接收。
 - Python 脚本成功控制小车的左右轮子的速度，实现直行、左转、右转和停止的操作。
 - 小车在 Gazebo 仿真环境中成功运动。
@@ -127,15 +137,13 @@ while(1):
 
 ### 实验分析:
 
-- 使用 Python 脚本从键盘读取输入，将输入转换为 Twist 消息，然后发布到 `carsim/cmd_vel` 主题，以控制小车的移动和转向。这个过程展示了 ROS 的发布-订阅模型，以及如何在 Python 中使用。
-- 使用 C++ 程序调用了"assemble_scans"服务，将连续的激光扫描数据组装成一个点云，并发布到"/cloud"和"/cloud2"两个主题上。这个过程展示了 ROS 的服务调用模型，以及如何在 C++ 中使用。
-- 使用 ROS 和 Gazebo 搭建并控制了一个四轮差速小车模型。使用 Python 脚本和 C++程序处理了激光扫描数据，并通过键盘控制了小车的移动。此外，使用 Python 脚本控制了小车的左右轮子的速度，实现了直行、左转、右转和停止的操作。
+~~- 使用 Python 脚本从键盘读取输入，将输入转换为 Twist 消息，然后发布到 `carsim/cmd_vel` 主题，以控制小车的移动和转向。这个过程展示了 ROS 的发布-订阅模型，以及如何在 Python 中使用。~~
 
 ### 实验总结:
 
-- 深入理解了 ROS 的工作原理，以及如何使用 ROS 和 Gazebo 进行机器人仿真。学习使用 Python 在 ROS 环境中编程，包括如何从键盘读取输入，将输入转换为 Twist 消息，然后发布到'carsim/cmd_vel'主题，以控制小车的移动和转向。
-- 学习使用 C++在 ROS 环境中编程，包括如何调用服务，如何组装激光扫描数据成一个点云，以及如何发布点云数据。
-- 学习使用 Python 和 C++在 ROS 环境中编程。此外，学习使用 Python 脚本控制小车的左右轮子的速度，实现直行、左转、右转和停止的操作。
+~~- 深入理解了 ROS 的工作原理，以及如何使用 ROS 和 Gazebo 进行机器人仿真。学习使用 Python 在 ROS 环境中编程，包括如何从键盘读取输入，将输入转换为 Twist 消息，然后发布到'carsim/cmd_vel'主题，以控制小车的移动和转向。~~
+~~- 学习使用 C++在 ROS 环境中编程，包括如何调用服务，如何组装激光扫描数据成一个点云，以及如何发布点云数据。~~
+~~- 学习使用 Python 和 C++在 ROS 环境中编程。此外，学习使用 Python 脚本控制小车的左右轮子的速度，实现直行、左转、右转和停止的操作。~~
 
 ### 参考文献:
 
