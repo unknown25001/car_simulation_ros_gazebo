@@ -32,22 +32,92 @@ rosrun carsim_gazebo teleop.py
 
 #### 控制小车
 
-- 使用 Python 脚本从键盘读取输入，将输入转换为 Twist 消息，然后发布到 `carsim/cmd_vel` 主题，以控制小车的移动和转向。
+- 使用 Python 脚本从键盘读取输入，将输入转换为 Twist 消息，然后发布到控制车速的消息队列，以控制小车的移动和转向。
+```python
+pub = rospy.Publisher('car/velocity', Twist)
 
-- 使用另一个 Python 脚本控制 carsim 小车的左右轮子的速度，实现直行、左转、右转和停止的操作。这个脚本首先初始化一个名为'car_controller'的新节点，并创建两个发布器，分别发布到'/carsim/rightWheel_effort_controller/command'和'/carsim/leftWheel_effort_controller/command'两个主题。然后，它定义了四个函数，分别用于控制小车直行、左转、右转和停止。最后，它定义了一个名为'plan_route'的函数，用于规划小车的行驶路线。
-- 使用 ROS 的 launch 文件在 Gazebo 仿真环境中启动 carsim 小车模型。
+while(1):
+    if key in move_keys.keys():
+        x, y, z, h = move_keys[getKey()]
 
-* 使用另一个 launch 文件启动 RViz 可视化工具和相关节点，加载并显示 carsim 小车模型。
-* 使用第三个 launch 文件启动激光扫描装配器节点，处理来自 carsim 小车的激光扫描数据。
-* 使用 C++程序调用"assemble_scans"服务，将连续的激光扫描数据组装成一个点云，并发布到"/cloud"和"/cloud2"两个主题上。这个程序首先等待"assemble_scans"服务可用，然后创建一个服务客户端来调用这个服务。它还定义了两个发布器，用于发布点云数据到"/cloud"和"/cloud2"两个主题。在一个无限循环中，它设置服务请求的开始和结束时间，然后调用服务。如果服务调用成功，它会打印出点云中的点的数量，然后发布点云数据。如果服务调用失败，它会打印出错误消息。
+    twist = Twist()
+    twist.linear.x = x*speed
+    twist.linear.y = y*speed
+    # ...
+    pub.publish(twist)
+```
+- 使用ROS提供的软件包`ros-noetic-diff-drive-controller`提供的差速控制器插件`libgazebo_ros_diff_drive.so`实现目标速度->轮子转动行为的转换。
+```xml
+<gazebo>
+  <plugin name="diff_ctrl" filename="libgazebo_ros_diff_drive.so">
+    ...
+    <leftJoint>left_wheel_hinge</leftJoint>
+    <rightJoint>right_wheel_hinge</rightJoint>
+    <commandTopic>car/velocity</commandTopic>
+    <odometryTopic>car/odom</odometryTopic>
+    <odometryFrame>odom</odometryFrame>
+    <robotBaseFrame>base_link</robotBaseFrame>
+    ...
+  </plugin>
+</gazebo>
+```
+- 建模方面，首先不知道从哪找了一个`.dae`的贴图文件，像这样贴在了`model.urdf`中的小车底盘上作为外壳：
+```xml
+<link name="base_link">
+    <visual>
+        <geometry>
+            <mesh filename="package://course/meshes/car.dae"/> 
+            <origin rpy="0 0 -1" xyz="0 0 1"/>
+            ...
+        </geometry>
+    </visual>
+</link>    
+```
+- 车的轮子是圆柱形的碰撞体，自定义了位置、摩擦系数等参数：
+```xml
+<link name="left_wheel">
+    <collision>
+        <geometry>
+        <cylinder length="0.1" radius="0.3"/>
+        </geometry>
+    <surface>
+        <friction>
+            <ode>
+            <mu>114514</mu>
+            </ode>
+        </friction>
+    </surface>
+        <origin rpy="0 1 1" xyz="0 0 0"/>
+    </collision>
+    <visual>
+        <geometry>
+        <cylinder length="0.1" radius="0.3"/>
+        </geometry>
+        <origin rpy="0 1 1" xyz="0 0 0"/>
+    </visual>
+        <inertial>
+    <mass value="1"/>
+    <origin rpy="0 1 1" xyz="0 0 0"/>
+</inertial>
+</link>
+```
+- 底盘和四个轮通过joint连接，这几个joint就是直接由上面的差速控制器插件控制的。
+```xml
+<joint type="continuous" name="left_wheel_hinge">
+    <axis xyz="0 1 0"/>
+    <origin rpy="0 0 0" xyz="1.25 0.8 0.2"/>
+    <parent link="base_link"/>
+    <child link="left_wheel"/>
+    <limit effort="100" velocity="100.0"  />
+</joint>
+...
+```
 
 ### 实验结果:
-
-- Python 脚本成功控制小车的左右轮子的速度，实现直行、左转、右转和停止的操作。
-- C++程序成功调用了"assemble_scans"服务，将连续的激光扫描数据组装成一个点云，并发布到"/cloud"和"/cloud2"两个主题上。点云数据成功发布并接收。
-- 小车在 Gazebo 仿真环境中成功运动。
+- 编写了一个urdf格式的模型，轮子是可旋转的、带摩擦系数的碰撞体，可以在地面上转动带动车辆移动
 - 控制指令成功发布并接收。
-- 小车的运动状态成功在 RViz 中显示。
+- Python 脚本成功控制小车的左右轮子的速度，实现直行、左转、右转和停止的操作。
+- 小车在 Gazebo 仿真环境中成功运动。
 
 ![](https://pic.l1nyz-tel.cc/202404082220223.png)
 

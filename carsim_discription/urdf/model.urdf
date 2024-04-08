@@ -7,12 +7,10 @@
 
     <link name="base_link">
         <visual>
-          <geometry>           
-
+          <geometry>
             <mesh filename="package://carsim_discription/meshes/car_019.dae"/> 
           </geometry>
-          
-        <origin rpy="0 0 -1.5708" xyz="-0.05 0 0.56"/>
+        <origin rpy="0 0 -1" xyz="0 0 1"/>
          <material name="blue"/>
         </visual>    
         <collision>
@@ -144,15 +142,12 @@
     </inertial>
   </link>
 
-
-
     <joint type="continuous" name="left_wheel_hinge">
         <axis xyz="0 1 0"/>
         <origin rpy="0 0 0" xyz="1.25 0.8 0.2"/>
         <parent link="base_link"/>
         <child link="left_wheel"/>
         <limit effort="100" velocity="100.0"  />
-
     </joint>
 
     <joint type="continuous" name="right_wheel_hinge">
@@ -402,7 +397,7 @@ TRANSMISSION
   
   
     <!-- hokuyo -->
-  <gazebo reference="hokuyo_link">
+  <!-- <gazebo reference="hokuyo_link">
     <sensor type="ray" name="head_hokuyo_sensor">
       <pose>0 0 0 0 0 0</pose>
       <visualize>true</visualize>
@@ -427,7 +422,7 @@ TRANSMISSION
         <frameName>hokuyo_link</frameName>
       </plugin>
     </sensor>
-  </gazebo>
+  </gazebo> -->
 
 
 <!--
